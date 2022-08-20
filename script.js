@@ -9,7 +9,7 @@ const sounds = {
 
 let soundInstances = [];
 
-let prevSoundPlace = undefined;
+let prevSoundPlace = 0;
 
 const createNewSound = (sound) => {
   const soundInstance = new Howl({
@@ -36,12 +36,14 @@ const addSoundbuttons = (sounds) => {
   }
 };
 
-const soundPlayHandler = (btn, createdSound) => {
+const stopAllSoundInstances = () => {
   // stopSounds
   soundInstances.forEach((instance) => {
     instance.stop();
   });
+};
 
+const soundPlayHandler = (btn, createdSound) => {
   //start actual sound
   createdSound.play();
 
@@ -67,44 +69,39 @@ const loopRandomSounds = () => {
   };
 
   const loopSoundsHandler = () => {
-    let nextSound;
-    let nextSoundPlace;
+    const currentSoundObject = randomize();
+    const currentSound = currentSoundObject.soundObject;
+    const currentSoundPlace = currentSoundObject.soundPlace;
+    console.log({ prev: prevSoundPlace, current: currentSoundPlace });
 
-    nextSoundObject = randomize();
-    nextSound = nextSoundObject.soundObject;
-    nextSoundPlace = nextSoundObject.soundPlace;
-
-    console.log(nextSoundPlace);
-    while (prevSoundPlace === nextSoundPlace) {
-      console.log('generateNew');
-      nextSoundObject = randomize();
-      nextSound = nextSoundObject.soundObject;
-      nextSoundPlace = nextSoundObject.soundPlace;
+    if (prevSoundPlace === currentSoundPlace) {
+      prevSoundPlace = currentSoundPlace;
+      console.log('return false');
+      loopSoundsHandler();
+      return false;
     }
 
-    prevSoundPlace = nextSoundPlace;
+    prevSoundPlace = currentSoundPlace;
 
-    soundInstances.forEach((instance) => {
-      instance.stop();
-      const btns = document.querySelectorAll('.btn');
-      btns.forEach((btn) => {
-        btn.classList.remove('active');
-      });
-    });
+    stopAllSoundInstances();
+    console.log('stop');
+    currentSound.play();
 
-    nextSound.play();
+    const currentSoundEl = document.getElementById(`sound${currentSoundPlace}`);
+    console.log(currentSoundEl);
 
-    const nextSoundEl = document.getElementById(`sound${nextSoundPlace}`);
-
-    nextSound.on('play', () => {
+    currentSound.on('play', () => {
       setTimeout(() => {
-        nextSoundEl.classList.add('active');
+        console.log('play');
+        currentSoundEl.classList.add('active');
       }, 100);
     });
 
-    nextSound.on('end', () => {
+    console.log('after play');
+    currentSound.on('end', () => {
       setTimeout(() => {
-        nextSoundEl.classList.remove('active');
+        console.log('end');
+        currentSoundEl.classList.remove('active');
         loopSoundsHandler();
       }, 100);
     });
@@ -124,7 +121,20 @@ const loopRandomSounds = () => {
   addEventListenerToButton();
 };
 
+const pressStopButton = () => {
+  const stopBtn = document.getElementById('btn-stop');
+
+  stopBtn.addEventListener('click', () => {
+    stopAllSoundInstances();
+    const soundBtns = document.querySelectorAll('.btn');
+    soundBtns.forEach((btn) => {
+      btn.classList.remove('active');
+    });
+  });
+};
+
 //** FUNCTIONS END
 
 addSoundbuttons(sounds);
 loopRandomSounds();
+pressStopButton();
