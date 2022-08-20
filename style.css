@@ -27,17 +27,19 @@ body {
   grid-template-columns: repeat(2, 1fr);
 
   grid-template-rows: auto;
-  grid-gap: 1rem;
+  grid-gap: 2rem;
 }
 
 .btn {
   background-color: #c46d53;
   border: none;
   border-radius: 5px;
+  transition: all 0.5s;
 }
 
 .active {
-  transform: scale(1.2);
+  transform: scale(1.1);
+  background-color: #ef4136;
 }
 
 @media (min-width: 450px) {
