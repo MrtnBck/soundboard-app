@@ -1,11 +1,11 @@
-const sounds = {
-  sound0: 'sounds/1.mp3',
-  sound1: 'sounds/2.mp3',
-  sound2: 'sounds/3.mp3',
-  sound3: 'sounds/1.mp3',
-  sound4: 'sounds/2.mp3',
-  sound5: 'sounds/3.mp3',
-};
+const sounds = [
+  { id: 'sound0', sound: 'sounds/1.mp3', label: '1' },
+  { id: 'sound1', sound: 'sounds/2.mp3', label: '2' },
+  { id: 'sound2', sound: 'sounds/3.mp3', label: '3' },
+  { id: 'sound3', sound: 'sounds/1.mp3', label: '1' },
+  { id: 'sound4', sound: 'sounds/2.mp3', label: '2' },
+  { id: 'sound5', sound: 'sounds/3.mp3', label: '3' },
+];
 
 let soundInstances = [];
 
@@ -14,26 +14,29 @@ let prevSoundPlace = 0;
 const createNewSound = (sound) => {
   const soundInstance = new Howl({
     src: [`${sound}`],
+    html5: false,
+    autoplay: false,
   });
   soundInstances = [...soundInstances, soundInstance];
 
   return soundInstance;
 };
 
-const addSoundbuttons = (sounds) => {
-  for (const sound in sounds) {
-    const createdSound = createNewSound(sounds[sound]);
+const addSoundbuttons = () => {
+  console.log(sounds);
+  sounds.forEach((soundEl) => {
+    const createdSound = createNewSound(soundEl.sound);
 
     const btn = document.createElement('button');
     btn.classList.add('btn');
-    btn.id = sound;
+    btn.id = soundEl.id;
     document.querySelector('.grid').appendChild(btn);
 
     //attach sound to button
     btn.addEventListener('click', () => {
       soundPlayHandler(btn, createdSound);
     });
-  }
+  });
 };
 
 const stopAllSoundInstances = () => {
@@ -61,44 +64,48 @@ const soundPlayHandler = (btn, createdSound) => {
 };
 
 const loopRandomSounds = () => {
-  const addEventListenerToButton = () => {
-    const playBtn = document.getElementById('btn-play');
-    playBtn.addEventListener('click', () => {
-      loopSoundsHandler();
+  const playBtn = document.getElementById('btn-play');
+  playBtn.addEventListener('click', () => {
+    loopSoundsHandler();
+    playBtn.classList.add('hide');
+    stopBtn.classList.remove('hide');
+  });
+
+  const stopBtn = document.getElementById('btn-stop');
+  stopBtn.addEventListener('click', () => {
+    stopAllSoundInstances();
+    const soundBtns = document.querySelectorAll('.btn');
+    soundBtns.forEach((btn) => {
+      btn.classList.remove('active');
     });
-  };
+
+    playBtn.classList.remove('hide');
+    stopBtn.classList.add('hide');
+  });
 
   const loopSoundsHandler = () => {
-    const currentSoundObject = randomize();
-    const currentSound = currentSoundObject.soundObject;
-    const currentSoundPlace = currentSoundObject.soundPlace;
-    console.log({ prev: prevSoundPlace, current: currentSoundPlace });
+    const currentSoundPlace = Math.floor(Math.random() * soundInstances.length);
 
     if (prevSoundPlace === currentSoundPlace) {
-      prevSoundPlace = currentSoundPlace;
-      console.log('return false');
       loopSoundsHandler();
+      console.log('prevSoundPlace = currentSoundPlace');
       return false;
     }
 
     prevSoundPlace = currentSoundPlace;
 
-    stopAllSoundInstances();
-    console.log('stop');
+    const currentSoundEl = document.getElementById(`sound${currentSoundPlace}`);
+    const currentSound = soundInstances[currentSoundPlace];
     currentSound.play();
 
-    const currentSoundEl = document.getElementById(`sound${currentSoundPlace}`);
-    console.log(currentSoundEl);
-
-    currentSound.on('play', () => {
+    currentSound.once('play', () => {
       setTimeout(() => {
         console.log('play');
         currentSoundEl.classList.add('active');
       }, 100);
     });
 
-    console.log('after play');
-    currentSound.on('end', () => {
+    currentSound.once('end', () => {
       setTimeout(() => {
         console.log('end');
         currentSoundEl.classList.remove('active');
@@ -106,35 +113,11 @@ const loopRandomSounds = () => {
       }, 100);
     });
   };
-
-  const randomize = () => {
-    const soundPlace = Math.floor(Math.random() * soundInstances.length);
-    const soundObject = soundInstances[soundPlace];
-
-    const returnObject = {
-      soundPlace,
-      soundObject,
-    };
-    return returnObject;
-  };
-
-  addEventListenerToButton();
 };
-
-const pressStopButton = () => {
-  const stopBtn = document.getElementById('btn-stop');
-
-  stopBtn.addEventListener('click', () => {
-    stopAllSoundInstances();
-    const soundBtns = document.querySelectorAll('.btn');
-    soundBtns.forEach((btn) => {
-      btn.classList.remove('active');
-    });
-  });
-};
-
 //** FUNCTIONS END
 
-addSoundbuttons(sounds);
+addSoundbuttons();
+//loopRandomSounds();
+//pressStopButton();
+
 loopRandomSounds();
-pressStopButton();

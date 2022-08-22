@@ -1,3 +1,7 @@
+:root {
+  --default-box-shadow: 8px 5px 5px #1d1e22;
+}
+
 body {
   margin: 0;
   background: linear-gradient(#393f4d, #1d1e22);
@@ -8,8 +12,23 @@ body {
   background-color: #d4d4dc;
 }
 
-.main-grid .header h2 {
-  padding-left: 15px;
+.main-grid .header {
+  box-shadow: 0 5px 5px#1d1e22;
+}
+
+.main-grid .footer {
+  box-shadow: 0px -5px 5px #1d1e22;
+}
+
+#btn-play,
+#btn-stop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 6rem;
+  width: 6rem;
+  border: 5px solid #feda6a;
+  border-radius: 20px;
 }
 
 #btn-play i {
@@ -17,16 +36,17 @@ body {
   color: #feda6a;
 }
 
-/* .wrapper {
-  border: 5px solid #d4d4dc;
-  border-radius: 5px;
-} */
+#btn-stop i {
+  font-size: 3rem;
+  color: #feda6a;
+}
 
 .btn {
   background-color: #d4d4dc;
   border: none;
   border-radius: 5px;
   transition: all 0.5s;
+  box-shadow: var(--default-box-shadow);
 }
 
 .active {
@@ -36,4 +56,8 @@ body {
 
 .main-grid .footer {
   background-color: #d4d4dc;
+}
+
+.hide {
+  display: none !important;
 }
