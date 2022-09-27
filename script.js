@@ -5,6 +5,13 @@ const sounds = [
   { id: 'sound3', sound: 'sounds/1.mp3', label: '1' },
   { id: 'sound4', sound: 'sounds/2.mp3', label: '2' },
   { id: 'sound5', sound: 'sounds/3.mp3', label: '3' },
+
+  /*  { id: 'sound0', sound: 'sounds/1.mp3', label: '1' },
+  { id: 'sound1', sound: 'sounds/2.mp3', label: '2' },
+  { id: 'sound2', sound: 'sounds/3.mp3', label: '3' },
+  { id: 'sound3', sound: 'sounds/1.mp3', label: '1' },
+  { id: 'sound4', sound: 'sounds/2.mp3', label: '2' },
+  { id: 'sound5', sound: 'sounds/3.mp3', label: '3' }, */
 ];
 
 let soundInstances = [];
@@ -27,14 +34,14 @@ const addSoundbuttons = () => {
   sounds.forEach((soundEl) => {
     const createdSound = createNewSound(soundEl.sound);
 
-    const btn = document.createElement('button');
-    btn.classList.add('btn');
-    btn.id = soundEl.id;
-    document.querySelector('.grid').appendChild(btn);
+    const tile = document.createElement('div');
+    tile.classList.add('tile');
+    tile.id = soundEl.id;
+    document.querySelector('.grid').appendChild(tile);
 
     //attach sound to button
-    btn.addEventListener('click', () => {
-      soundPlayHandler(btn, createdSound);
+    tile.addEventListener('click', () => {
+      soundPlayHandler(tile, createdSound);
     });
   });
 };
@@ -46,20 +53,20 @@ const stopAllSoundInstances = () => {
   });
 };
 
-const soundPlayHandler = (btn, createdSound) => {
+const soundPlayHandler = (tile, createdSound) => {
   //start actual sound
   createdSound.play();
 
   createdSound.on('play', () => {
-    btn.classList.add('active');
+    tile.classList.add('active');
   });
 
   createdSound.on('end', () => {
-    btn.classList.remove('active');
+    tile.classList.remove('active');
   });
 
   createdSound.on('stop', () => {
-    btn.classList.remove('active');
+    tile.classList.remove('active');
   });
 };
 
@@ -74,7 +81,7 @@ const loopRandomSounds = () => {
   const stopBtn = document.getElementById('btn-stop');
   stopBtn.addEventListener('click', () => {
     stopAllSoundInstances();
-    const soundBtns = document.querySelectorAll('.btn');
+    const soundBtns = document.querySelectorAll('.tile');
     soundBtns.forEach((btn) => {
       btn.classList.remove('active');
     });
